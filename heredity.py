@@ -36,14 +36,22 @@ class Heredity():
     def parent(self):
         return self._parent
 
-    def ancestors(self):
-        if self.parent:
-            return set.union(self.parent, *(a.ancestors() for a in self.parent))
+    def ancestors(self, depth="inf"):
+        if self.parent and depth == "inf":
+            return set.union(self.parent, *(a.ancestors(depth) for a in self.parent))
+        elif self.parent and depth:  # an int for the depth has been given.
+            return set.union(self.parent, *(a.ancestors(int(depth)-1) for a in self.parent))
         else:
             return set()
 
-    def descendants(self):
-        if self.child:
-            return set.union(self.child, *(a.descendants() for a in self.parent))
+    def descendants(self, depth="inf"):
+        if self.child and depth == "inf":
+            return set.union(self.child, *(a.descendants(depth) for a in self.child))
+        if self.child and depth:
+            return set.union(self.child, *(a.descendants(int(depth)-1) for a in self.child))
         else:
             return set()
+
+    def siblings(self):
+        return set.union(*(a.child for a in self.parent))
+        # set.union(*(a.parent for a in self.child)))
