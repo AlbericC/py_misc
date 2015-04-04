@@ -4,11 +4,7 @@ class Heredity():
         """Provides heredity capability
 
         Suitable for any n/n "hierarchic" structure,
-        methods:
-        add_parent(other)
-        add_child(other)
-        has_parent(other)
-        has_child(other)"""
+        """
 
         self._parent = set()
         self._child = set()
