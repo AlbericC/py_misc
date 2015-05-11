@@ -1,4 +1,4 @@
-__author__ = "atrament"
+__author__ = "Atrament"
 __all__ = "talkative", "timed", "Memoize", "mro_list"
 
 from time import time
@@ -40,14 +40,36 @@ class Memoize:
         self.function = function
         self.__name__ = function.__name__
         self.__doc__ = "::Memoize decorated::\n" + str(function.__doc__)
-        self.memoized = dict()
+        self._cache = dict()
 
-    def __call__(self, *args):
-        if args in self.memoized:
-            return self.memoized.get(args)
-        else:
-            ans = self.memoized[args] = self.function(*args)
-            return ans
+    def __call__(self, *args, **kwargs):
+        try:
+            if args in self._cache:
+                return self._cache.get(args)
+            else:
+                ans = self._cache[args] = self.function(*args, **kwargs)
+                return ans
+        except TypeError:
+            # arguments are not hashable
+            return self.function(*args, **kwargs)
+
+
+def memoize(func):
+    """return a version of func that remembers what has been previously processed"""
+    cache = dict()
+
+    @wraps(func)
+    def new_func(*args, **kwargs):
+        try:
+            return cache[args, kwargs]
+        except TypeError:  # not hashable args
+            return func(*args, **kwargs)
+        except KeyError:  # needs to be processed at least the first time
+            cache[args, kwargs] = func(*args, **kwargs)
+            return cache[args, kwargs]
+
+    new_func._cache = cache
+    return new_func
 
 
 def mro_list(some_class):
