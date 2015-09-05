@@ -43,11 +43,12 @@ class Memoize:
         self._cache = dict()
 
     def __call__(self, *args, **kwargs):
+        idxtuple = args,tuple(kwargs.items())  # convert dict to tuple to allow hashing
         try:
-            if args in self._cache:
-                return self._cache.get(args)
+            if idxtuple in self._cache:
+                return self._cache.get(idxtuple)
             else:
-                ans = self._cache[args] = self.function(*args, **kwargs)
+                ans = self._cache[idxtuple] = self.function(*args, **kwargs)
                 return ans
         except TypeError:
             # arguments are not hashable
