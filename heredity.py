@@ -5,7 +5,6 @@ class Heredity():
 
         Suitable for any n/n "hierarchic" structure,
         """
-
         self._parent = set()
         self._child = set()
 

@@ -54,24 +54,6 @@ class Memoize:
             return self.function(*args, **kwargs)
 
 
-def memoize(func):
-    """return a version of func that remembers what has been previously processed"""
-    cache = dict()
-
-    @wraps(func)
-    def new_func(*args, **kwargs):
-        try:
-            return cache[args, kwargs]
-        except TypeError:  # not hashable args
-            return func(*args, **kwargs)
-        except KeyError:  # needs to be processed at least the first time
-            cache[args, kwargs] = func(*args, **kwargs)
-            return cache[args, kwargs]
-
-    new_func._cache = cache
-    return new_func
-
-
 def mro_list(some_class):
     """class decorator allowing to list all attributes and where
     they come from in the MRO through the '.mro_list' method"""
