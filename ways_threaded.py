@@ -3,6 +3,7 @@ import queue
 
 from sys import argv, version
 from threading import Thread
+from decorators import Memoize
 
 _values = (50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5,
            2, 1)
@@ -38,22 +39,6 @@ class ThreadedWorker:
     def feed(self, iterator):
         for task in iterator:
             self.queue.put(task)
-
-
-class Memoize:
-    def __init__(self, function):
-        """gives Memoize capability to a function"""
-        self.function = function
-        self.__name__ = function.__name__
-        self.__doc__ = "::Memoize decorated::\n" + str(function.__doc__)
-        self.memoized = dict()
-
-    def __call__(self, *args):
-        if args in self.memoized:
-            return self.memoized.get(args)
-        else:
-            ans = self.memoized[args] = self.function(*args)
-            return ans
 
 
 @Memoize
