@@ -1,4 +1,4 @@
-__author__ = "atrament"
+__author__ = "Atrament"
 __all__ = "talkative", "timed", "Memoize", "mro_list"
 
 from time import time
@@ -40,14 +40,19 @@ class Memoize:
         self.function = function
         self.__name__ = function.__name__
         self.__doc__ = "::Memoize decorated::\n" + str(function.__doc__)
-        self.memoized = dict()
+        self._cache = dict()
 
-    def __call__(self, *args):
-        if args in self.memoized:
-            return self.memoized.get(args)
-        else:
-            ans = self.memoized[args] = self.function(*args)
-            return ans
+    def __call__(self, *args, **kwargs):
+        idxtuple = args,tuple(kwargs.items())  # convert dict to tuple to allow hashing
+        try:
+            if idxtuple in self._cache:
+                return self._cache.get(idxtuple)
+            else:
+                ans = self._cache[idxtuple] = self.function(*args, **kwargs)
+                return ans
+        except TypeError:
+            # arguments are not hashable
+            return self.function(*args, **kwargs)
 
 
 def mro_list(some_class):
